@@ -1,13 +1,18 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { API_BASE_URL } from '@app/shared/config/api-base-url.token';
+import { SKIP_ERROR_TOAST } from '@app/auth/skip-error-toast.context';
 import { GuestInvite, GroupInviteToken } from '@app/models/reservations/guest-invite.model';
 import { GroupSessionsResponse } from '@app/models/group-orders/group-sessions-response.model';
 import { GroupStatusResponse } from '@app/models/group-orders/group-status.model';
 import { OwnerSessionResponse } from '@app/models/group-orders/owner-session.model';
 import { SubmittedDish } from '@app/models/group-orders/submit-group-pre-order.model';
+
+export interface RequestOptions {
+  silent?: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 export class GroupOrdersService {
@@ -24,9 +29,11 @@ export class GroupOrdersService {
   }
 
   /** GET /guest/groups/{groupReservationId}/sessions */
-  getSessions$(groupReservationId: string): Observable<GroupSessionsResponse> {
+  getSessions$(groupReservationId: string, options?: RequestOptions): Observable<GroupSessionsResponse> {
+    const context = this.buildContext(options);
     return this.http.get<GroupSessionsResponse>(
       `${this.baseUrl}/guest/groups/${groupReservationId}/sessions`,
+      { context },
     );
   }
 
@@ -38,9 +45,11 @@ export class GroupOrdersService {
   }
 
   /** GET /guest/groups/{groupReservationId}/status */
-  getStatus$(groupReservationId: string): Observable<GroupStatusResponse> {
+  getStatus$(groupReservationId: string, options?: RequestOptions): Observable<GroupStatusResponse> {
+    const context = this.buildContext(options);
     return this.http.get<GroupStatusResponse>(
       `${this.baseUrl}/guest/groups/${groupReservationId}/status`,
+      { context },
     );
   }
 
@@ -50,5 +59,16 @@ export class GroupOrdersService {
       `${this.baseUrl}/group-reservations/${groupReservationId}/submit`,
       { reservationId },
     );
+  }
+
+  /** DELETE /guest/groups/{groupReservationId}/sessions/{guestSessionId} */
+  removeSession$(groupReservationId: string, guestSessionId: string): Observable<GroupSessionsResponse> {
+    return this.http.delete<GroupSessionsResponse>(
+      `${this.baseUrl}/guest/groups/${groupReservationId}/sessions/${guestSessionId}`,
+    );
+  }
+
+  private buildContext(options?: RequestOptions): HttpContext {
+    return new HttpContext().set(SKIP_ERROR_TOAST, options?.silent === true);
   }
 }

@@ -1,5 +1,18 @@
 <article class="card">
-  <h2 class="title">{{ title() }}</h2>
+  <div class="card-header">
+    <h2 class="title">{{ title() }}</h2>
+
+    @if (canRemove()) {
+      <button
+        class="remove-btn"
+        type="button"
+        [attr.aria-label]="'Remove ' + participant().name"
+        (click)="onRemoveClick()"
+      >
+        Remove Guest
+      </button>
+    }
+  </div>
 
   @if (participant().isSubmitted) {
     <span class="chip submitted">Submitted</span>
