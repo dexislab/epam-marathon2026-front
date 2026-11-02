@@ -9,22 +9,49 @@
   gap: 20px;
   box-sizing: border-box;
   width: 100%;
+
+  &--centered {
+    align-items: center;
+    justify-content: center;
+    min-height: 240px;
+  }
 }
 
-// ── Header ───────────────────────────────────────────────────────────────────
+// ── Header ────────────────────────────────────────────────────────────────────
 .page-header {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+.page-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .page-title {
-  // Override global h1 (48px) — this is a modal-style panel heading
   font-size: 22px;
   font-weight: 700;
   line-height: 1.3;
   margin: 0;
   color: color.$neutral-900;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: color.$green-100;
+  color: color.$green-600;
+
+  &--sent {
+    background-color: color.$blue-100;
+    color: color.$blue-500;
+  }
 }
 
 .meta {
@@ -48,6 +75,24 @@
   }
 }
 
+// ── Warning banner ────────────────────────────────────────────────────────────
+.warning-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background-color: color.$orange-100;
+  color: color.$orange-600;
+  font-size: 13px;
+  line-height: 1.5;
+
+  img {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
 // ── Participant list ──────────────────────────────────────────────────────────
 .participants {
   list-style: none;
@@ -58,7 +103,52 @@
   gap: 12px;
 }
 
-// ── Grand Total ───────────────────────────────────────────────────────────────
+// ── Consolidated pre-order ────────────────────────────────────────────────────
+.consolidated {
+  background-color: color.$neutral-100;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.consolidated__title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: color.$neutral-700;
+}
+
+.consolidated__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.consolidated__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.consolidated__name {
+  flex: 1;
+  color: color.$neutral-900;
+}
+
+.consolidated__price {
+  font-weight: 500;
+  min-width: 56px;
+  text-align: right;
+  color: color.$neutral-900;
+}
+
+// ── Grand Total ────────────────────────────────────────────────────────────────
 .grand-total {
   display: flex;
   justify-content: space-between;
@@ -74,7 +164,7 @@
   color: color.$green-400;
 }
 
-// ── Submit button ─────────────────────────────────────────────────────────────
+// ── Submit button ──────────────────────────────────────────────────────────────
 .submit-btn {
   width: 100%;
   height: 48px;
@@ -88,11 +178,11 @@
   letter-spacing: 0.01em;
   transition: opacity 0.15s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     opacity: 0.92;
   }
 
-  &:active {
+  &:active:not(:disabled) {
     opacity: 0.85;
   }
 
@@ -100,9 +190,74 @@
     outline: 2px solid color.$green-400;
     outline-offset: 2px;
   }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
-// ── 375 px mobile — ensure nothing overflows ──────────────────────────────────
+// ── State messages ─────────────────────────────────────────────────────────────
+.state-message {
+  text-align: center;
+  color: color.$neutral-600;
+  font-size: 15px;
+  margin: 0;
+
+  &--error {
+    color: color.$red-400;
+  }
+}
+
+.retry-btn {
+  margin-top: 8px;
+  padding: 8px 20px;
+  border: 1px solid color.$neutral-200;
+  border-radius: 6px;
+  background-color: color.$neutral-0;
+  color: color.$neutral-900;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background-color: color.$neutral-100;
+  }
+}
+
+// ── Modal action buttons ────────────────────────────────────────────────────────
+.modal-action-btn {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &--primary {
+    border: none;
+    background: color.$green-gradient;
+    color: color.$neutral-0;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &--secondary {
+    border: 1px solid color.$neutral-200;
+    background: color.$neutral-0;
+    color: color.$neutral-900;
+
+    &:hover {
+      background-color: color.$neutral-100;
+    }
+  }
+}
+
+// ── 375 px mobile ─────────────────────────────────────────────────────────────
 @media (max-width: 375px) {
   .page {
     padding: 16px 12px 24px;

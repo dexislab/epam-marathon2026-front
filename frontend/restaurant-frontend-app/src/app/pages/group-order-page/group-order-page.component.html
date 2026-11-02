@@ -1,37 +1,138 @@
-<main class="page">
-  <header class="page-header">
-    <h1 class="page-title">Group Pre-Order</h1>
+<!-- ── Loading ─────────────────────────────────────────────────────────────── -->
+@if (pageState() === 'loading') {
+  <main class="page page--centered">
+    <p class="state-message">Loading…</p>
+  </main>
+}
 
-    <div class="meta">
-      <span class="meta-item">
-        <img src="assets/svg/location.svg" alt="" aria-hidden="true" width="16" height="16" />
-        {{ invite.LocationAddress }}
-      </span>
-      <span class="meta-item">
-        <img src="assets/svg/calendar.svg" alt="" aria-hidden="true" width="16" height="16" />
-        {{ invite.StartTime | date:'MMM d, y' }}
-      </span>
-      <span class="meta-item">
-        <img src="assets/svg/clock.svg" alt="" aria-hidden="true" width="16" height="16" />
-        {{ invite.StartTime | date:'HH:mm' }} – {{ invite.EndTime | date:'HH:mm' }}
-      </span>
-      <span class="meta-item">
-        <img src="assets/svg/people.svg" alt="" aria-hidden="true" width="16" height="16" />
-        {{ participants().length }} of {{ invite.MaxGuestCount }} guests
-      </span>
-    </div>
-  </header>
+<!-- ── 404 error ───────────────────────────────────────────────────────────── -->
+@if (pageState() === 'error-404') {
+  <main class="page page--centered">
+    <p class="state-message state-message--error">Group reservation not found</p>
+  </main>
+}
 
-  <ul class="participants">
-    @for (person of participants(); track person.id) {
-      <li><app-participant-card [participant]="person" /></li>
+<!-- ── Generic error ──────────────────────────────────────────────────────── -->
+@if (pageState() === 'error') {
+  <main class="page page--centered">
+    <p class="state-message state-message--error">Something went wrong. Please try again.</p>
+    <button class="retry-btn" type="button" (click)="load()">Try again</button>
+  </main>
+}
+
+<!-- ── Ready ───────────────────────────────────────────────────────────────── -->
+@if (pageState() === 'ready') {
+  <main class="page">
+
+    <!-- Header -->
+    <header class="page-header">
+      <div class="page-title-row">
+        <h1 class="page-title">Group Pre-Order</h1>
+        <span class="status-badge" [class.status-badge--sent]="isSubmitted()">
+          {{ statusLabel() }}
+        </span>
+      </div>
+
+      @if (invite()) {
+        <div class="meta">
+          <span class="meta-item">
+            <img src="assets/svg/location.svg" alt="" aria-hidden="true" width="16" height="16" />
+            {{ invite()!.LocationAddress }}
+          </span>
+          <span class="meta-item">
+            <img src="assets/svg/calendar.svg" alt="" aria-hidden="true" width="16" height="16" />
+            {{ invite()!.StartTime | date:'MMM d, y' }}
+          </span>
+          <span class="meta-item">
+            <img src="assets/svg/clock.svg" alt="" aria-hidden="true" width="16" height="16" />
+            {{ invite()!.StartTime | date:'HH:mm' }} – {{ invite()!.EndTime | date:'HH:mm' }}
+          </span>
+          <span class="meta-item">
+            <img src="assets/svg/people.svg" alt="" aria-hidden="true" width="16" height="16" />
+            {{ participants().length }} of {{ invite()!.MaxGuestCount }} guests
+          </span>
+        </div>
+      }
+    </header>
+
+    <!-- Pending-participants warning -->
+    @if (pendingCount() > 0 && !isSubmitted()) {
+      <div class="warning-banner" role="alert">
+        <img src="assets/svg/bell-regular.svg" alt="" aria-hidden="true" width="16" height="16" />
+        {{ pendingCount() }} participant{{ pendingCount() === 1 ? '' : 's' }} hasn't submitted their cart yet — their dishes won't be included in the order
+      </div>
     }
-  </ul>
 
-  <div class="grand-total">
-    <span>Grand Total</span>
-    <span class="grand-total__amount">{{ total | currency }}</span>
-  </div>
+    <!-- Participant list -->
+    @if (!hasAnyDishes()) {
+      <p class="state-message">Participants haven't added any dishes yet</p>
+    } @else {
+      <ul class="participants">
+        @for (person of participants(); track person.id) {
+          <li>
+            <app-participant-card
+              [participant]="person"
+              [isMe]="person.id === ownerSessionId()"
+            />
+          </li>
+        }
+      </ul>
 
-  <button class="submit-btn" type="button">Submit Pre-Order</button>
-</main>
+      <!-- Consolidated order + Grand Total -->
+      <div class="consolidated">
+        <h2 class="consolidated__title">Consolidated pre-order</h2>
+        <ul class="consolidated__items">
+          @for (item of consolidatedItems(); track item.dish.id) {
+            <li class="consolidated__item">
+              <span class="consolidated__name">{{ item.dish.name }} × {{ item.quantity }}</span>
+              <span class="consolidated__price">{{ item.dish.price * item.quantity | currency }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="grand-total">
+        <span>Grand Total</span>
+        <span class="grand-total__amount">{{ grandTotal() | currency }}</span>
+      </div>
+    }
+
+    <!-- Submit button (hidden after submission) -->
+    @if (!isSubmitted()) {
+      <button
+        class="submit-btn"
+        type="button"
+        [disabled]="!hasSubmittedParticipants()"
+        (click)="openSubmitModal()"
+      >
+        Submit Pre-Order
+      </button>
+    }
+
+  </main>
+}
+
+<!-- ── Submit confirmation modal ───────────────────────────────────────────── -->
+@if (showSubmitModal()) {
+  <app-modal title="Submit Pre-Order" (closed)="closeSubmitModal()">
+    <p>Are you sure you want to submit the group pre-order to the restaurant?</p>
+
+    <div modal-actions>
+      <button
+        class="modal-action-btn modal-action-btn--secondary"
+        type="button"
+        (click)="closeSubmitModal()"
+      >
+        Cancel
+      </button>
+      <button
+        class="modal-action-btn modal-action-btn--primary"
+        type="button"
+        [disabled]="submitting()"
+        (click)="confirmSubmit()"
+      >
+        {{ submitting() ? 'Submitting…' : 'Submit' }}
+      </button>
+    </div>
+  </app-modal>
+}
