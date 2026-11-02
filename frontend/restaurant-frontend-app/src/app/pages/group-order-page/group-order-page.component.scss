@@ -75,6 +75,39 @@
   }
 }
 
+// ── Sync bar ──────────────────────────────────────────────────────────────────
+.sync-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: color.$neutral-600;
+}
+
+.sync-bar__updated {
+  color: color.$neutral-600;
+}
+
+.sync-bar__error {
+  color: color.$orange-600;
+}
+
+.sync-bar__btn {
+  background: none;
+  border: 1px solid color.$neutral-200;
+  border-radius: 4px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: color.$neutral-700;
+  cursor: pointer;
+
+  &:hover {
+    background-color: color.$neutral-100;
+  }
+}
+
 // ── Warning banner ────────────────────────────────────────────────────────────
 .warning-banner {
   display: flex;
@@ -253,6 +286,16 @@
 
     &:hover {
       background-color: color.$neutral-100;
+    }
+  }
+
+  &--danger {
+    border: none;
+    background-color: color.$red-400;
+    color: color.$neutral-0;
+
+    &:hover {
+      opacity: 0.9;
     }
   }
 }

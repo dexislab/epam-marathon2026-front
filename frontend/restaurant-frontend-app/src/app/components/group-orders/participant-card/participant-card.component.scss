@@ -10,6 +10,37 @@
   gap: 12px;
 }
 
+// ── Card header row (title + remove button) ──────────────────────────────────
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.remove-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: color.$red-400;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid color.$red-400;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
 // Override global h2 (32px) — card title is smaller
 .title {
   font-size: 18px;

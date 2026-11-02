@@ -55,6 +55,18 @@
       }
     </header>
 
+    <!-- Sync bar: "Updated at …" + Refresh button -->
+    <div class="sync-bar">
+      @if (refreshError()) {
+        <span class="sync-bar__error">
+          Couldn't refresh. Showing data from {{ updatedAt() | date:'HH:mm:ss' }}
+        </span>
+      } @else {
+        <span class="sync-bar__updated">Updated at {{ updatedAt() | date:'HH:mm:ss' }}</span>
+      }
+      <button class="sync-bar__btn" type="button" (click)="refresh()">Refresh</button>
+    </div>
+
     <!-- Pending-participants warning -->
     @if (pendingCount() > 0 && !isSubmitted()) {
       <div class="warning-banner" role="alert">
@@ -73,6 +85,8 @@
             <app-participant-card
               [participant]="person"
               [isMe]="person.id === ownerSessionId()"
+              [canRemove]="person.type === 'Guest' && !isSubmitted()"
+              (removeClick)="openRemoveModal($event)"
             />
           </li>
         }
@@ -132,6 +146,34 @@
         (click)="confirmSubmit()"
       >
         {{ submitting() ? 'Submitting…' : 'Submit' }}
+      </button>
+    </div>
+  </app-modal>
+}
+
+<!-- ── Remove Guest confirmation modal ─────────────────────────────────────── -->
+@if (participantToRemove()) {
+  <app-modal title="Remove Guest" (closed)="closeRemoveModal()">
+    <p>
+      Are you sure you want to remove
+      <strong>{{ participantToRemove()!.name }}</strong>
+      and their pre-order from this reservation? This action cannot be undone.
+    </p>
+
+    <div modal-actions>
+      <button
+        class="modal-action-btn modal-action-btn--secondary"
+        type="button"
+        (click)="closeRemoveModal()"
+      >
+        Cancel
+      </button>
+      <button
+        class="modal-action-btn modal-action-btn--danger"
+        type="button"
+        (click)="confirmRemove()"
+      >
+        Remove Guest
       </button>
     </div>
   </app-modal>
