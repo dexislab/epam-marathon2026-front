@@ -1,0 +1,119 @@
+@use 'app/shared/styles/abstracts/colors' as color;
+
+.card {
+  background-color: color.$neutral-0;
+  border: 1px solid color.$neutral-200;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// Override global h2 (32px) — card title is smaller
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  color: color.$neutral-900;
+}
+
+// ── Status chip ─────────────────────────────────────────────────────────────
+.chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  align-self: flex-start;
+
+  &.submitted {
+    background-color: color.$green-100;
+    color: color.$green-600;
+  }
+
+  &.pending {
+    background-color: color.$orange-100;
+    color: color.$orange-600;
+  }
+}
+
+// ── Dish list ────────────────────────────────────────────────────────────────
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+
+  &.initial {
+    background-color: color.$sage-100;
+    color: color.$green-600;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // override <img> styles when used as a <span>
+    object-fit: unset;
+  }
+}
+
+.name {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  color: color.$neutral-900;
+}
+
+.qty {
+  margin: 0;
+  font-size: 14px;
+  color: color.$neutral-600;
+  white-space: nowrap;
+}
+
+.price {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: color.$neutral-900;
+  white-space: nowrap;
+  min-width: 56px;
+  text-align: right;
+}
+
+.empty {
+  margin: 0;
+  color: color.$neutral-400;
+  font-size: 14px;
+}
+
+// ── Subtotal row ─────────────────────────────────────────────────────────────
+.subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid color.$neutral-200;
+  font-size: 15px;
+  font-weight: 600;
+  color: color.$neutral-900;
+}
