@@ -144,7 +144,7 @@ describe('Рівень 2 · сторінка Owner Review', () => {
       expect(service.submit$).toHaveBeenCalledOnceWith('grp-1', 'res-1');
     });
 
-    it('після успіху: «Sent to Restaurant», кнопки Submit більше немає', () => {
+    it('після успіху: «Sent to Restaurant», кнопка Submit заблокована (disabled)', () => {
       service.submit$.and.returnValue(of([{ dishId: 'dish1', quantity: 3 }]));
       const { fixture, element } = create();
       buttonByText(element, 'Submit Pre-Order')?.click();
@@ -153,7 +153,7 @@ describe('Рівень 2 · сторінка Owner Review', () => {
       fixture.detectChanges();
 
       expect(element.textContent).toContain('Sent to Restaurant');
-      expect(buttonByText(element, 'Submit Pre-Order')).toBeUndefined();
+      expect(buttonByText(element, 'Submit Pre-Order')?.disabled).toBeTrue();
     });
 
     it('помилка submit: екран не ламається, кнопку можна натиснути знову', () => {

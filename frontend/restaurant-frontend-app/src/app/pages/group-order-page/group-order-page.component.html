@@ -111,17 +111,15 @@
       </div>
     }
 
-    <!-- Submit button (hidden after submission) -->
-    @if (!isSubmitted()) {
-      <button
-        class="submit-btn"
-        type="button"
-        [disabled]="!hasSubmittedParticipants()"
-        (click)="openSubmitModal()"
-      >
-        Submit Pre-Order
-      </button>
-    }
+    <!-- Submit button (disabled after submission or when no participants submitted) -->
+    <button
+      class="submit-btn"
+      type="button"
+      [disabled]="isSubmitted() || !hasSubmittedParticipants()"
+      (click)="openSubmitModal()"
+    >
+      Submit Pre-Order
+    </button>
 
   </main>
 }
