@@ -20,7 +20,11 @@ export const tokenInterceptor: HttpInterceptorFn = (
   // IMPORTANT: do not modify Guest endpoints at all.
   // Guest flow uses a different token (guest session token) and we must not touch the body.
   // Otherwise we break POST /guest/sessions payload.
-  if (req.url.includes('/guest/')) {
+  // Exception: Owner accesses /guest/groups/ and /guest/invites/ with their own Bearer token.
+  const isOwnerGuestEndpoint =
+    req.url.includes('/guest/groups/') || req.url.includes('/guest/invites/');
+
+  if (req.url.includes('/guest/') && !isOwnerGuestEndpoint) {
     return next(req).pipe(
       catchError((error: HttpErrorResponse) => {
         console.log(error);
