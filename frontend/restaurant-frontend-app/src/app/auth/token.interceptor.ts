@@ -22,7 +22,9 @@ export const tokenInterceptor: HttpInterceptorFn = (
   // Otherwise we break POST /guest/sessions payload.
   // Exception: Owner accesses /guest/groups/ and /guest/invites/ with their own Bearer token.
   const isOwnerGuestEndpoint =
-    req.url.includes('/guest/groups/') || req.url.includes('/guest/invites/');
+    req.url.includes('/guest/groups/') ||
+    req.url.includes('/guest/invites/') ||
+    (req.method === 'POST' && req.url.endsWith('/guest/sessions'));
 
   if (req.url.includes('/guest/') && !isOwnerGuestEndpoint) {
     return next(req).pipe(
