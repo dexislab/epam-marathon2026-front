@@ -105,7 +105,21 @@ export class ReservationInviteModalComponent implements OnInit {
   }
 
   onMakePreOrder(): void {
+    const reservation = this.reservation();
+    const startTime = new Date(reservation.startTime);
+    const endTime = new Date(reservation.endTime);
+
     this.closed.emit();
-    this.router.navigate(['/menu']);
+    void this.router.navigate(['/menu'], {
+      queryParams: {
+        preOrder: 'true',
+        reservationId: reservation.id,
+        reservationLabel: [
+          reservation.locationAddress,
+          startTime.toDateString(),
+          `${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`,
+        ].join(', '),
+      },
+    });
   }
 }
