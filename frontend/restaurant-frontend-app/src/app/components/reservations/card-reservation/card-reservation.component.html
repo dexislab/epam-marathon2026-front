@@ -170,12 +170,14 @@
             Pre-order
           </button>
 
-          <a
-            class="button button--primary button--large"
-            [routerLink]="['/reservations', r().id, 'group-order']"
-          >
-            Group Pre-Order
-          </a>
+          @if (r().guestCount !== 1) {
+            <a
+              class="button button--primary button--large"
+              [routerLink]="['/reservations', r().id, 'group-order']"
+            >
+              Group Pre-Order
+            </a>
+          }
         }
       }
 
